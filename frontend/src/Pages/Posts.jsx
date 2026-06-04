@@ -31,9 +31,16 @@ const Posts = () => {
     try {
       const res = await http.delete(`/post/${id}`);
 
-      if (res.data.status === 'success') {
-        setPosts(() => posts.filter((post) => post._id !== id));
+      const ok =
+        res?.data?.success === true ||
+        res?.data?.status === 'success' ||
+        res?.status === 200;
+
+      if (ok) {
+        setPosts((prev) => prev.filter((post) => post._id !== id));
         alert('Post deleted successfully');
+      } else {
+        console.warn('Delete returned unexpected response', res?.data);
       }
     } catch (error) {
       console.log(error);
