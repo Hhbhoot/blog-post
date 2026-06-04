@@ -8,7 +8,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [logoutLoading, setLogoutLoading] = useState(false);
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +28,12 @@ const Home = () => {
 
     fetchPosts();
   }, []);
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      navigate('/admin');
+    }
+  }, [user, navigate]);
 
   const featuredPost = posts[0];
   const recentPosts = posts.slice(1);
