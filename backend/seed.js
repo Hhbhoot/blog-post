@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import User from './src/Models/user.model.js';
 dotenv.config();
+import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 
 const createAdmin = async () => {
@@ -13,10 +14,13 @@ const createAdmin = async () => {
       process.exit(0);
     }
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash('Admin123@', salt);
+
     const admin = await User.create({
       name: 'Admin',
       email: 'admin@example.com',
-      password: 'Admin123@',
+      password: hashedPassword,
       role: 'admin',
     });
     console.log('Admin created successfully:', admin);
