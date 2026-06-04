@@ -1,4 +1,5 @@
 import User from '../Models/user.model.js';
+import AppError from '../Utils/appError.util.js';
 import asyncHandler from '../Utils/asyncHandler.js';
 import generateToken from '../Utils/jwt.js';
 import validatePassword from '../Utils/validatePassword.js';
