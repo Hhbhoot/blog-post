@@ -1,4 +1,4 @@
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import http from '../api';
 
@@ -29,50 +29,77 @@ const PostDetail = () => {
   if (!post) return <div className="p-8">Post not found.</div>;
 
   return (
-    <main className="p-8 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold">{post.title}</h1>
-      <p className="text-gray-600">{post.content}</p>
-      {post.featuredImage && (
-        <img
-          src={import.meta.env.VITE_API_URL_IMAGE + '/' + post.featuredImage}
-          alt="img"
-          className="w-full h-40"
-        />
-      )}
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        {post.categories?.length > 0 && (
-          <span className="text-xs uppercase tracking-[0.2em] text-slate-500">
-            Categories:
-          </span>
-        )}
-        {post.categories?.map((category) => (
-          <span
-            key={category}
-            className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700"
+    <main className="p-8">
+      <div className="mx-auto max-w-4xl rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-slate-200">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <Link
+            to="/"
+            className="inline-flex items-center text-sm font-semibold text-indigo-600 transition hover:text-indigo-800"
           >
-            {category}
-          </span>
-        ))}
-      </div>
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        {post.tags?.length > 0 && (
-          <span className="text-xs uppercase tracking-[0.2em] text-slate-500">
-            Tags:
-          </span>
-        )}
-        {post.tags?.map((tag) => (
+            ← Back to home
+          </Link>
           <span
-            key={tag}
-            className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700"
+            className={`inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold ${
+              post.status === 'published'
+                ? 'bg-emerald-100 text-emerald-800'
+                : 'bg-amber-100 text-amber-800'
+            }`}
           >
-            {tag}
+            {post.status || 'draft'}
           </span>
-        ))}
+        </div>
+
+        {post.featuredImage ? (
+          <img
+            src={`${import.meta.env.VITE_API_URL_IMAGE}/${post.featuredImage}`}
+            alt={post.title}
+            className="h-[28rem] w-full rounded-[1.5rem] object-cover shadow-inner"
+          />
+        ) : (
+          <div className="flex h-[28rem] items-center justify-center rounded-[1.5rem] bg-gradient-to-r from-slate-100 via-white to-slate-100 text-slate-400 shadow-inner">
+            No featured image available
+          </div>
+        )}
+
+        <div className="mt-10 space-y-6">
+          <div>
+            <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+              {post.title}
+            </h1>
+            <p className="mt-4 text-sm text-slate-500">
+              by {post.author?.name || 'Unknown'} •{' '}
+              {new Date(post.createdAt).toLocaleDateString()}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {post.categories?.map((category) => (
+              <span
+                key={category}
+                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-600"
+              >
+                {category}
+              </span>
+            ))}
+            {post.tags?.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-700"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          <article className="space-y-6 text-slate-700">
+            {post.content.split('\n').map((paragraph, index) => (
+              <p key={index} className="leading-8">
+                {paragraph}
+              </p>
+            ))}
+          </article>
+        </div>
       </div>
-      <p className="text-sm text-gray-500">
-        by {post.author?.name || 'Unknown'} •{' '}
-        {new Date(post.createdAt).toLocaleDateString()}
-      </p>
     </main>
   );
 };
