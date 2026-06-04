@@ -64,6 +64,7 @@ const LoginPage = () => {
       if (res.data.data) {
         setUser(res.data.data);
         const role = res.data.data.role;
+        localStorage.setItem('authToken', res.data.token);
         if (role === 'admin') {
           navigate('/admin');
         } else {
