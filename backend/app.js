@@ -19,7 +19,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: 'https://blog-post-yvmg.onrender.com',
-    credentials: true,
   }),
 );
 
