@@ -1,5 +1,5 @@
 const config = Object.freeze({
-  api: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
+  api: import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1',
 });
 
 export default config;
