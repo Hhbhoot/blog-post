@@ -20,6 +20,7 @@ const createAdmin = async () => {
       role: 'admin',
     });
     console.log('Admin created successfully:', admin);
+    process.exit(0);
   } catch (error) {
     console.error('Error creating admin:', error);
   }
