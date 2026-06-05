@@ -11,8 +11,11 @@ function loadAdsenseScript() {
   if (adsenseLoaderPromise) return adsenseLoaderPromise;
 
   adsenseLoaderPromise = new Promise((resolve, reject) => {
-    // Prevent duplicate script tags
-    if (document.querySelector('script[data-adsense-loader]')) {
+    // Prevent duplicate script tags or duplicate loads when the script is included in index.html.
+    if (
+      document.querySelector('script[data-adsense-loader]') ||
+      document.querySelector('script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')
+    ) {
       // wait a tick for global object
       return resolve();
     }

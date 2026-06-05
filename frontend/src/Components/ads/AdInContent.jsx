@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import AdPlaceholder from './AdPlaceholder';
 import AdSense from './AdSense';
 import { ADSENSE_ENABLED } from '../../config/ads';
@@ -16,9 +16,9 @@ const AdInContent = ({ className = '' }) => {
       style={{ display: 'flex', justifyContent: 'center' }}
     >
       <AdSense
-        adSlot=""
-        adFormat="auto"
-        style={{ display: 'block', width: '100%', maxWidth: 320, height: 100 }}
+        adSlot="1295057918"
+        adFormat="fluid"
+        style={{ display: 'block', width: '100%', maxWidth: 728, minHeight: 100 }}
         onError={() => setAdsenseFailed(true)}
       />
     </div>

@@ -62,8 +62,8 @@ export const testAds = [
   },
 ];
 
-export const ADSENSE_ENABLED = false;
-export const ADSENSE_CLIENT = '';
+export const ADSENSE_ENABLED = true;
+export const ADSENSE_CLIENT = 'ca-pub-4992424127755633';
 
 export const getAdsByPlacement = (placement) => {
   return testAds.filter((ad) => ad.placement === placement);
