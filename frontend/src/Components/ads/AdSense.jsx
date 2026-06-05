@@ -68,11 +68,13 @@ const AdSense = ({
           // Ensure adsbygoogle array exists and request a new ad slot render
           (window.adsbygoogle = window.adsbygoogle || []).push({});
         } catch (err) {
+          console.error("AdSense push error:", err);
           setFailed(true);
           if (onError) onError(err);
         }
       })
       .catch((err) => {
+        console.error("AdSense script load error:", err);
         setFailed(true);
         if (onError) onError(err);
       });
