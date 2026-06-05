@@ -19,7 +19,7 @@ postRouter
     upload.single('featuredImage'),
     verifyToken,
     authorizedRoles('admin'),
-    createPost,
+    createPost
   );
 
 postRouter.route('/').get(verifyToken, getAllPosts);

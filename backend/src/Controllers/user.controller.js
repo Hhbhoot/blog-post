@@ -16,8 +16,8 @@ export const register = asyncHandler(async (req, res, next) => {
     return next(
       new AppError(
         'Password must be 8-32 characters long and include uppercase, lowercase, numbers, and symbols.',
-        400,
-      ),
+        400
+      )
     );
   }
 

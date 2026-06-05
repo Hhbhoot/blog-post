@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import AdBanner from '../components/ads/AdBanner';
+import AdSidebar from '../components/ads/AdSidebar';
+import AdInContent from '../components/ads/AdInContent';
+import AdStickyFooter from '../components/ads/AdStickyFooter';
 import { useAuth } from '../hooks/useAuth';
 import http from '../api';
 
@@ -96,6 +100,11 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Homepage top banner placement (example) */}
+      <div className="mt-6">
+        <AdBanner />
+      </div>
+
       <section className="mt-10 grid gap-6 xl:grid-cols-[1.5fr_1fr]">
         {featuredPost ? (
           <article className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
@@ -126,6 +135,11 @@ const Home = () => {
               {(featuredPost.content || '').slice(0, 260)}
               {featuredPost.content?.length > 260 ? '…' : ''}
             </p>
+
+            {/* In-content ad placement (example) */}
+            <div className="mt-6">
+              <AdInContent />
+            </div>
             <div className="mt-6 flex flex-wrap gap-2">
               {featuredPost.categories?.map((category) => (
                 <span
@@ -144,6 +158,11 @@ const Home = () => {
                 Read full story
               </Link>
             </div>
+
+            {/* Second in-content ad placement (example) */}
+            <div className="mt-6">
+              <AdInContent />
+            </div>
           </article>
         ) : (
           <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
@@ -154,6 +173,10 @@ const Home = () => {
         )}
 
         <aside className="space-y-4">
+          {/* Sidebar ad placement (example) */}
+          <div>
+            <AdSidebar />
+          </div>
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-900">
               Quick reads
@@ -200,7 +223,7 @@ const Home = () => {
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
               {Array.from(
-                new Set(posts.flatMap((post) => post.categories || [])),
+                new Set(posts.flatMap((post) => post.categories || []))
               )
                 .slice(0, 8)
                 .map((category) => (
@@ -220,6 +243,14 @@ const Home = () => {
           </div>
         </aside>
       </section>
+
+      {/* Footer ad placement (example) */}
+      <div className="mt-10">
+        <AdBanner />
+      </div>
+
+      {/* Sticky footer ad (example) */}
+      <AdStickyFooter />
     </main>
   );
 };

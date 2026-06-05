@@ -48,7 +48,7 @@ const postSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 postSchema.index({ status: 1, createdAt: -1 });

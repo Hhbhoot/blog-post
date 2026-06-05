@@ -58,7 +58,7 @@ const seedDatabase = async () => {
 
     if (existingPostCount > 0) {
       console.log(
-        `Detected ${existingPostCount} existing post(s). Skipping sample post creation.`,
+        `Detected ${existingPostCount} existing post(s). Skipping sample post creation.`
       );
       process.exit(0);
     }

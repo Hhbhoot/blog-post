@@ -44,8 +44,8 @@ const AdminCreatePost = () => {
             form.categories
               .split(',')
               .map((s) => s.trim())
-              .filter(Boolean),
-          ),
+              .filter(Boolean)
+          )
         );
       }
       if (form.tags) {
@@ -55,8 +55,8 @@ const AdminCreatePost = () => {
             form.tags
               .split(',')
               .map((s) => s.trim())
-              .filter(Boolean),
-          ),
+              .filter(Boolean)
+          )
         );
       }
 

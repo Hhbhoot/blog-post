@@ -48,7 +48,7 @@ const Posts = () => {
   };
 
   const publishedCount = posts.filter(
-    (post) => post.status === 'published',
+    (post) => post.status === 'published'
   ).length;
   const draftCount = posts.length - publishedCount;
 

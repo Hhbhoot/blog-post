@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: '*',
-  }),
+  })
 );
 
 app.use(morgan('dev'));
