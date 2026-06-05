@@ -49,7 +49,7 @@ const AdSense = ({
   adSlot = ADSENSE_SLOT,
   adFormat = ADSENSE_FORMAT || 'auto',
   adLayoutKey = ADSENSE_LAYOUT_KEY,
-  style = { display: 'block' },
+  style = { display: 'block', width: '100%', minWidth: '250px' },
   className = '',
   onError,
 }) => {
@@ -59,19 +59,25 @@ const AdSense = ({
 
   useEffect(() => {
     let mounted = true;
+    let timerId = null;
 
     // If the script fails to load, we surface the error so parent can show placeholder
     loadAdsenseScript()
       .then(() => {
         if (!mounted) return;
-        try {
-          // Ensure adsbygoogle array exists and request a new ad slot render
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (err) {
-          console.error("AdSense push error:", err);
-          setFailed(true);
-          if (onError) onError(err);
-        }
+        
+        // Delay initialization to allow browser layout calculation to complete (width > 250px)
+        timerId = setTimeout(() => {
+          if (!mounted) return;
+          try {
+            // Ensure adsbygoogle array exists and request a new ad slot render
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          } catch (err) {
+            console.error("AdSense push error:", err);
+            setFailed(true);
+            if (onError) onError(err);
+          }
+        }, 200);
       })
       .catch((err) => {
         console.error("AdSense script load error:", err);
@@ -81,6 +87,7 @@ const AdSense = ({
 
     return () => {
       mounted = false;
+      if (timerId) clearTimeout(timerId);
     };
     // Re-run when route changes so ads can re-initialize on client navigation
   }, [location.pathname, onError]);
