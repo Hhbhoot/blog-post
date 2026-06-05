@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
-import { ADSENSE_CLIENT } from '../../config/ads';
+import { ADSENSE_CLIENT, ADSENSE_SLOT, ADSENSE_LAYOUT_KEY, ADSENSE_FORMAT } from '../../config/ads';
 
 // Singleton loader promise so we never inject the script more than once
 let adsenseLoaderPromise = null;
@@ -44,11 +44,12 @@ function loadAdsenseScript() {
 }
 
 // Reusable AdSense component
-// Accepts adSlot, adFormat, style, className
+// Accepts adSlot, adFormat, adLayoutKey, style, className
 const AdSense = ({
-  adSlot,
-  adFormat = 'auto',
-  style = {},
+  adSlot = ADSENSE_SLOT,
+  adFormat = ADSENSE_FORMAT || 'auto',
+  adLayoutKey = ADSENSE_LAYOUT_KEY,
+  style = { display: 'block' },
   className = '',
   onError,
 }) => {
@@ -95,6 +96,7 @@ const AdSense = ({
       data-ad-client={ADSENSE_CLIENT || undefined}
       data-ad-slot={adSlot}
       data-ad-format={adFormat}
+      data-ad-layout-key={adLayoutKey}
       ref={ref}
     />
   );

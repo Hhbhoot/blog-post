@@ -16,9 +16,6 @@ const AdInContent = ({ className = '' }) => {
       style={{ display: 'flex', justifyContent: 'center' }}
     >
       <AdSense
-        adSlot="1295057918"
-        adFormat="fluid"
-        style={{ display: 'block', width: '100%', maxWidth: 728, minHeight: 100 }}
         onError={() => setAdsenseFailed(true)}
       />
     </div>

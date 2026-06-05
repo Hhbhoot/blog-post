@@ -17,9 +17,6 @@ const AdBanner = ({ className = '' }) => {
       style={{ display: 'flex', justifyContent: 'center' }}
     >
       <AdSense
-        adSlot="" // set your slot when enabling real AdSense
-        adFormat="horizontal"
-        style={{ display: 'block', width: '100%', maxWidth: 728, height: 90 }}
         onError={() => setAdsenseFailed(true)}
       />
     </div>

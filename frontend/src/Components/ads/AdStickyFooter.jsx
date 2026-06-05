@@ -30,12 +30,8 @@ const AdStickyFooter = ({ className = '' }) => {
       className={className}
     >
       <AdSense
-        adSlot=""
-        adFormat="auto"
         style={{
           display: 'block',
-          width: 320,
-          height: 100,
           borderRadius: 8,
           overflow: 'hidden',
         }}

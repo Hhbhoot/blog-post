@@ -16,9 +16,6 @@ const AdSidebar = ({ className = '' }) => {
       style={{ display: 'flex', justifyContent: 'center' }}
     >
       <AdSense
-        adSlot=""
-        adFormat="auto"
-        style={{ display: 'block', width: 300, height: 250 }}
         onError={() => setAdsenseFailed(true)}
       />
     </div>
