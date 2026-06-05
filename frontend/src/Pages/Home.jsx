@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import AdBanner from '../components/ads/AdBanner';
-import AdSidebar from '../components/ads/AdSidebar';
-import AdInContent from '../components/ads/AdInContent';
-import AdStickyFooter from '../components/ads/AdStickyFooter';
+import AdBanner from '../Components/ads/AdBanner';
+import AdSidebar from '../Components/ads/AdSidebar';
+import AdInContent from '../Components/ads/AdInContent';
+import AdStickyFooter from '../Components/ads/AdStickyFooter';
 import { useAuth } from '../hooks/useAuth';
 import http from '../api';
 
