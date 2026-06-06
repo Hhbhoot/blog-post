@@ -4,6 +4,13 @@ import http from '../api';
 import LoadingSpinner from '../Components/LoadingSpinner';
 import { ArrowLeft, User, Calendar, Tag, FolderOpen } from 'lucide-react';
 
+const getImageUrl = (img) => {
+  if (!img) return '';
+  return img.startsWith('http://') || img.startsWith('https://')
+    ? img
+    : `${import.meta.env.VITE_API_URL_IMAGE}/${img}`;
+};
+
 const PostDetail = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
@@ -71,7 +78,7 @@ const PostDetail = () => {
           {post.featuredImage ? (
             <div className="relative h-[22rem] md:h-[30rem] w-full overflow-hidden">
               <img
-                src={`${import.meta.env.VITE_API_URL_IMAGE}/${post.featuredImage}`}
+                src={getImageUrl(post.featuredImage)}
                 alt={post.title}
                 className="w-full h-full object-cover"
               />

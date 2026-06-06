@@ -12,6 +12,13 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
+const getImageUrl = (img) => {
+  if (!img) return '';
+  return img.startsWith('http://') || img.startsWith('https://')
+    ? img
+    : `${import.meta.env.VITE_API_URL_IMAGE}/${img}`;
+};
+
 const AdminEditPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -230,7 +237,7 @@ const AdminEditPost = () => {
                 </p>
                 <div className="relative w-40 h-24 rounded-lg overflow-hidden border border-slate-200">
                   <img
-                    src={`${import.meta.env.VITE_API_URL_IMAGE}/${existingImage}`}
+                    src={getImageUrl(existingImage)}
                     alt="Current Featured Cover"
                     className="w-full h-full object-cover"
                   />
@@ -332,7 +339,7 @@ const AdminEditPost = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold text-white bg-indigo-650 rounded-2xl hover:bg-indigo-750 active:scale-95 transition-all shadow-sm cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold text-white bg-indigo-600 rounded-2xl hover:bg-indigo-750 active:scale-95 transition-all shadow-sm cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>

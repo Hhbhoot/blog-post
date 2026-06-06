@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import AdPlaceholder from './AdPlaceholder';
 import AdSense from './AdSense';
 import { ADSENSE_ENABLED } from '../../config/ads';

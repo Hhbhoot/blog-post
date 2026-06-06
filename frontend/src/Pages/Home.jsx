@@ -19,6 +19,13 @@ import {
   LayoutDashboard,
 } from 'lucide-react';
 
+const getImageUrl = (img) => {
+  if (!img) return '';
+  return img.startsWith('http://') || img.startsWith('https://')
+    ? img
+    : `${import.meta.env.VITE_API_URL_IMAGE}/${img}`;
+};
+
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -167,7 +174,7 @@ const Home = () => {
                 {featuredPost.featuredImage ? (
                   <div className="relative h-72 md:h-96 w-full overflow-hidden">
                     <img
-                      src={`${import.meta.env.VITE_API_URL_IMAGE}/${featuredPost.featuredImage}`}
+                      src={getImageUrl(featuredPost.featuredImage)}
                       alt={featuredPost.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />

@@ -1,6 +1,8 @@
 import Post from '../Models/post.model.js';
 import slugify from 'slugify';
 import asyncHandler from '../Utils/asyncHandler.js';
+import { uploadToCloudinary } from '../Utils/cloudinary.js';
+import fs from 'fs';
 
 const sanitizeArray = (arr) => {
   if (!arr) return [];
@@ -44,24 +46,46 @@ export const createPost = asyncHandler(async (req, res, next) => {
     let { title, content, featuredImage, categories, tags, status } = req.body;
 
     if (!title.trim() || !content.trim()) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        try {
+          fs.unlinkSync(req.file.path);
+        } catch (err) {
+          console.error('Failed to delete temp file:', err);
+        }
+      }
       return res.status(400).json({
         success: false,
         message: 'Title and content are required.',
       });
     }
 
-    if (req.file) {
-      featuredImage = req.file.path.replace('\\', '/');
-    }
-
     const slug = slugify(title, { lower: true, strict: true });
 
     const existingPost = await Post.findOne({ slug });
     if (existingPost) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        try {
+          fs.unlinkSync(req.file.path);
+        } catch (err) {
+          console.error('Failed to delete temp file:', err);
+        }
+      }
       return res.status(400).json({
         success: false,
         message: 'A post with this title already exists.',
       });
+    }
+
+    if (req.file) {
+      const uploadResult = await uploadToCloudinary(req.file.path);
+      if (uploadResult && uploadResult.secure_url) {
+        featuredImage = uploadResult.secure_url;
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to upload image to Cloudinary.',
+        });
+      }
     }
 
     const newPost = await Post.create({
@@ -168,7 +192,15 @@ export const updatePost = asyncHandler(async (req, res, next) => {
   let updateData = { ...req.body };
 
   if (req.file) {
-    updateData.featuredImage = req.file.path.replace('\\', '/');
+    const uploadResult = await uploadToCloudinary(req.file.path);
+    if (uploadResult && uploadResult.secure_url) {
+      updateData.featuredImage = uploadResult.secure_url;
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to upload image to Cloudinary.',
+      });
+    }
   }
 
   if (req.body.categories) {
