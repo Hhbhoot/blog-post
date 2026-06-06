@@ -8,6 +8,7 @@ import Dashboard from './Pages/Dashboard';
 import Users from './Pages/Users';
 import Posts from './Pages/Posts';
 import CreatePostAdmin from './Pages/AdminCreatePost';
+import AdminEditPost from './Pages/AdminEditPost';
 import { ProtectedRoutes } from './Components/ProtectedRoutes';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/admin/users" element={<Users />} />
           <Route path="/admin/posts" element={<Posts />} />
           <Route path="/admin/posts/create" element={<CreatePostAdmin />} />
+          <Route path="/admin/posts/edit/:id" element={<AdminEditPost />} />
         </Route>
       </Routes>
     </BrowserRouter>

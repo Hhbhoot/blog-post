@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
-import { ADSENSE_CLIENT, ADSENSE_SLOT, ADSENSE_LAYOUT_KEY, ADSENSE_FORMAT, ADSENSE_TEST_MODE } from '../../config/ads';
+import {
+  ADSENSE_CLIENT,
+  ADSENSE_SLOT,
+  ADSENSE_LAYOUT_KEY,
+  ADSENSE_FORMAT,
+  ADSENSE_TEST_MODE,
+} from '../../config/ads';
 
 // Singleton loader promise so we never inject the script more than once
 let adsenseLoaderPromise = null;
@@ -14,7 +20,9 @@ function loadAdsenseScript() {
     // Prevent duplicate script tags or duplicate loads when the script is included in index.html.
     if (
       document.querySelector('script[data-adsense-loader]') ||
-      document.querySelector('script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')
+      document.querySelector(
+        'script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]'
+      )
     ) {
       // wait a tick for global object
       return resolve();
@@ -65,7 +73,7 @@ const AdSense = ({
     loadAdsenseScript()
       .then(() => {
         if (!mounted) return;
-        
+
         // Delay initialization to allow browser layout calculation to complete (width > 250px)
         timerId = setTimeout(() => {
           if (!mounted) return;
@@ -73,14 +81,14 @@ const AdSense = ({
             // Ensure adsbygoogle array exists and request a new ad slot render
             (window.adsbygoogle = window.adsbygoogle || []).push({});
           } catch (err) {
-            console.error("AdSense push error:", err);
+            console.error('AdSense push error:', err);
             setFailed(true);
             if (onError) onError(err);
           }
         }, 200);
       })
       .catch((err) => {
-        console.error("AdSense script load error:", err);
+        console.error('AdSense script load error:', err);
         setFailed(true);
         if (onError) onError(err);
       });

@@ -2,6 +2,43 @@ import Post from '../Models/post.model.js';
 import slugify from 'slugify';
 import asyncHandler from '../Utils/asyncHandler.js';
 
+const sanitizeArray = (arr) => {
+  if (!arr) return [];
+  if (!Array.isArray(arr)) {
+    if (typeof arr === 'string') {
+      try {
+        const parsed = JSON.parse(arr);
+        if (Array.isArray(parsed)) return sanitizeArray(parsed);
+      } catch (e) {
+        return arr
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+    }
+    return [];
+  }
+
+  return arr.flatMap((item) => {
+    if (typeof item === 'string') {
+      const trimmed = item.trim();
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          return sanitizeArray(JSON.parse(trimmed));
+        } catch (e) {
+          return trimmed
+            .replace(/[\[\]"]/g, '')
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
+        }
+      }
+      return trimmed;
+    }
+    return item;
+  });
+};
+
 export const createPost = asyncHandler(async (req, res, next) => {
   try {
     let { title, content, featuredImage, categories, tags, status } = req.body;
@@ -33,8 +70,8 @@ export const createPost = asyncHandler(async (req, res, next) => {
       content,
       author: req.user._id,
       featuredImage,
-      categories,
-      tags,
+      categories: sanitizeArray(categories),
+      tags: sanitizeArray(tags),
       status,
     });
 
@@ -70,12 +107,19 @@ export const getAllPosts = asyncHandler(async (req, res, next) => {
     .limit(limit);
 
   const totalPosts = await Post.countDocuments();
-
   const totalPages = Math.ceil(totalPosts / limit);
+
+  const sanitizedPosts = posts.map((doc) => {
+    const p = doc.toObject();
+    p.categories = sanitizeArray(p.categories);
+    p.tags = sanitizeArray(p.tags);
+    return p;
+  });
+
   res.status(200).json({
     success: true,
     message: 'Posts fetched successfully',
-    data: posts,
+    data: sanitizedPosts,
     pagination: {
       currentPage: page,
       totalPages,
@@ -85,7 +129,18 @@ export const getAllPosts = asyncHandler(async (req, res, next) => {
 });
 
 export const getSinglePost = asyncHandler(async (req, res, next) => {
-  const post = await Post.findById(req.params.id).populate('author', 'name');
+  const postDoc = await Post.findById(req.params.id).populate('author', 'name');
+  if (!postDoc) {
+    return res.status(404).json({
+      success: false,
+      message: 'Post not found.',
+    });
+  }
+
+  const post = postDoc.toObject();
+  post.categories = sanitizeArray(post.categories);
+  post.tags = sanitizeArray(post.tags);
+
   res.status(200).json({
     success: true,
     message: 'Post fetched successfully',
@@ -95,6 +150,13 @@ export const getSinglePost = asyncHandler(async (req, res, next) => {
 
 export const deletePost = asyncHandler(async (req, res, next) => {
   const post = await Post.findByIdAndDelete(req.params.id);
+  if (!post) {
+    return res.status(404).json({
+      success: false,
+      message: 'Post not found.',
+    });
+  }
+
   res.status(200).json({
     success: true,
     message: 'Post deleted successfully',
@@ -103,11 +165,41 @@ export const deletePost = asyncHandler(async (req, res, next) => {
 });
 
 export const updatePost = asyncHandler(async (req, res, next) => {
-  const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
+  let updateData = { ...req.body };
+
+  if (req.file) {
+    updateData.featuredImage = req.file.path.replace('\\', '/');
+  }
+
+  if (req.body.categories) {
+    updateData.categories = sanitizeArray(req.body.categories);
+  }
+
+  if (req.body.tags) {
+    updateData.tags = sanitizeArray(req.body.tags);
+  }
+
+  if (req.body.title) {
+    updateData.slug = slugify(req.body.title, { lower: true, strict: true });
+  }
+
+  const postDoc = await Post.findByIdAndUpdate(req.params.id, updateData, {
     new: true,
   });
+
+  if (!postDoc) {
+    return res.status(404).json({
+      success: false,
+      message: 'Post not found.',
+    });
+  }
+
+  const post = postDoc.toObject();
+  post.categories = sanitizeArray(post.categories);
+  post.tags = sanitizeArray(post.tags);
+
   res.status(200).json({
-    success: true,
+    success: 'success',
     message: 'Post updated successfully',
     data: post,
   });
@@ -124,12 +216,19 @@ export const usersPost = asyncHandler(async (req, res, next) => {
     .limit(limit);
 
   const totalPosts = await Post.countDocuments({ author: req.user._id });
-
   const totalPages = Math.ceil(totalPosts / limit);
+
+  const sanitizedPosts = posts.map((doc) => {
+    const p = doc.toObject();
+    p.categories = sanitizeArray(p.categories);
+    p.tags = sanitizeArray(p.tags);
+    return p;
+  });
+
   res.status(200).json({
     success: true,
     message: 'Posts fetched successfully',
-    data: posts,
+    data: sanitizedPosts,
     pagination: {
       currentPage: page,
       totalPages,

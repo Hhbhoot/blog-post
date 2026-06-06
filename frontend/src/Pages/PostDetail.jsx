@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import http from '../api';
+import LoadingSpinner from '../Components/LoadingSpinner';
+import { ArrowLeft, User, Calendar, Tag, FolderOpen } from 'lucide-react';
 
 const PostDetail = () => {
   const { id } = useParams();
@@ -24,81 +26,133 @@ const PostDetail = () => {
     fetchPost();
   }, [id]);
 
-  if (loading) return <div className="p-8">Loading post...</div>;
-  if (error) return <div className="p-8 text-red-600">{error}</div>;
-  if (!post) return <div className="p-8">Post not found.</div>;
+  if (loading) return <LoadingSpinner message="Loading article content..." />;
+  if (error)
+    return (
+      <div className="p-8 text-rose-600 max-w-lg mx-auto text-center font-medium border border-rose-100 bg-rose-50/50 rounded-2xl mt-12">
+        {error}
+      </div>
+    );
+  if (!post)
+    return (
+      <div className="p-8 text-slate-500 max-w-lg mx-auto text-center font-medium mt-12">
+        Post not found.
+      </div>
+    );
 
   return (
-    <main className="p-8">
-      <div className="mx-auto max-w-4xl rounded-[2rem] bg-white p-6 shadow-xl ring-1 ring-slate-200">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <main className="min-h-screen bg-slate-50/50 text-slate-900 pb-20">
+      {/* Top Header/Action Bar */}
+      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-6 py-4 shadow-sm select-none">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link
             to="/"
-            className="inline-flex items-center text-sm font-semibold text-indigo-600 transition hover:text-indigo-800"
+            className="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors group"
           >
-            ← Back to home
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span>Back to home</span>
           </Link>
           <span
-            className={`inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold ${
+            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
               post.status === 'published'
-                ? 'bg-emerald-100 text-emerald-800'
-                : 'bg-amber-100 text-amber-800'
+                ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+                : 'bg-amber-50 border border-amber-200 text-amber-700'
             }`}
           >
             {post.status || 'draft'}
           </span>
         </div>
+      </header>
 
-        {post.featuredImage ? (
-          <img
-            src={`${import.meta.env.VITE_API_URL_IMAGE}/${post.featuredImage}`}
-            alt={post.title}
-            className="h-[28rem] w-full rounded-[1.5rem] object-cover shadow-inner"
-          />
-        ) : (
-          <div className="flex h-[28rem] items-center justify-center rounded-[1.5rem] bg-gradient-to-r from-slate-100 via-white to-slate-100 text-slate-400 shadow-inner">
-            No featured image available
+      {/* Main Content Area */}
+      <div className="max-w-4xl mx-auto px-6 mt-8">
+        <article className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-sm">
+          {/* Featured Image */}
+          {post.featuredImage ? (
+            <div className="relative h-[22rem] md:h-[30rem] w-full overflow-hidden">
+              <img
+                src={`${import.meta.env.VITE_API_URL_IMAGE}/${post.featuredImage}`}
+                alt={post.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            </div>
+          ) : (
+            <div className="flex h-56 items-center justify-center bg-gradient-to-tr from-indigo-50 to-purple-50 text-indigo-400/80 font-medium">
+              BlogSpace • Reader View
+            </div>
+          )}
+
+          <div className="p-8 md:p-12 space-y-8">
+            {/* Meta Details */}
+            <div className="space-y-4">
+              <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl md:text-5xl leading-tight">
+                {post.title}
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500 border-b border-slate-100 pb-6">
+                <span className="inline-flex items-center gap-1.5">
+                  <User className="w-4 h-4 text-slate-400" />
+                  by {post.author?.name || 'Unknown'}
+                </span>
+                <span className="text-slate-200 hidden sm:inline">|</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-slate-400" />
+                  {new Date(post.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+
+            {/* Content Body */}
+            <div className="prose prose-slate max-w-none">
+              {post.content.split('\n').map((paragraph, index) => (
+                <p
+                  key={index}
+                  className="text-base md:text-lg text-slate-700 leading-relaxed md:leading-loose mb-6"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            {/* Categorization & Tags Section */}
+            {(post.categories?.length > 0 || post.tags?.length > 0) && (
+              <div className="border-t border-slate-100 pt-8 space-y-4">
+                {post.categories?.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider inline-flex items-center gap-1 mr-2">
+                      <FolderOpen className="w-3.5 h-3.5" /> Categories:
+                    </span>
+                    {post.categories.map((category) => (
+                      <span
+                        key={category}
+                        className="rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-slate-600"
+                      >
+                        {category}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {post.tags?.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider inline-flex items-center gap-1 mr-2">
+                      <Tag className="w-3.5 h-3.5" /> Tags:
+                    </span>
+                    {post.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-indigo-100 bg-indigo-50/50 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-indigo-600"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        )}
-
-        <div className="mt-10 space-y-6">
-          <div>
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-              {post.title}
-            </h1>
-            <p className="mt-4 text-sm text-slate-500">
-              by {post.author?.name || 'Unknown'} •{' '}
-              {new Date(post.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            {post.categories?.map((category) => (
-              <span
-                key={category}
-                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-600"
-              >
-                {category}
-              </span>
-            ))}
-            {post.tags?.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-700"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          <article className="space-y-6 text-slate-700">
-            {post.content.split('\n').map((paragraph, index) => (
-              <p key={index} className="leading-8">
-                {paragraph}
-              </p>
-            ))}
-          </article>
-        </div>
+        </article>
       </div>
     </main>
   );

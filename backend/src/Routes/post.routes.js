@@ -30,7 +30,12 @@ postRouter.route('/:id').get(verifyToken, getSinglePost);
 
 postRouter
   .route('/:id')
-  .patch(verifyToken, authorizedRoles('admin'), updatePost);
+  .patch(
+    upload.single('featuredImage'),
+    verifyToken,
+    authorizedRoles('admin'),
+    updatePost
+  );
 
 postRouter
   .route('/:id')

@@ -72,4 +72,3 @@ export const ADSENSE_FORMAT = 'fluid';
 export const getAdsByPlacement = (placement) => {
   return testAds.filter((ad) => ad.placement === placement);
 };
-

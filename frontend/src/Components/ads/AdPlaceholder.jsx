@@ -47,7 +47,8 @@ const AdPlaceholder = ({
     color: '#ffffff',
     textAlign: 'center',
     overflow: 'hidden',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+    boxShadow:
+      '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
     border: '1px solid rgba(255, 255, 255, 0.1)',
   };
 
@@ -68,15 +69,32 @@ const AdPlaceholder = ({
   };
 
   return (
-    <div className={className} style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
+    <div
+      className={className}
+      style={{
+        position: 'relative',
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
       <div style={labelStyle}>Sponsor</div>
       <div style={containerStyle}>
-        <div style={{ fontWeight: 700, fontSize: size.h && size.h < 110 ? '14px' : '16px', marginBottom: '2px', letterSpacing: '-0.01em' }}>
+        <div
+          style={{
+            fontWeight: 700,
+            fontSize: size.h && size.h < 110 ? '14px' : '16px',
+            marginBottom: '2px',
+            letterSpacing: '-0.01em',
+          }}
+        >
           Sponsored Content Space
         </div>
-        {(size.h === 'auto' || (typeof size.h === 'number' && size.h >= 110)) && (
+        {(size.h === 'auto' ||
+          (typeof size.h === 'number' && size.h >= 110)) && (
           <div style={{ fontSize: '12px', opacity: 0.9, maxWidth: '80%' }}>
-            Google AdSense is active. Ads will appear here shortly once verified.
+            Google AdSense is active. Ads will appear here shortly once
+            verified.
           </div>
         )}
       </div>
@@ -85,4 +103,3 @@ const AdPlaceholder = ({
 };
 
 export default AdPlaceholder;
-

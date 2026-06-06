@@ -15,9 +15,7 @@ const AdInContent = ({ className = '' }) => {
       className={className}
       style={{ display: 'flex', justifyContent: 'center' }}
     >
-      <AdSense
-        onError={() => setAdsenseFailed(true)}
-      />
+      <AdSense onError={() => setAdsenseFailed(true)} />
     </div>
   );
 };

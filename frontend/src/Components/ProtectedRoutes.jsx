@@ -1,11 +1,12 @@
 import { Navigate, Outlet } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
+import LoadingScreen from './LoadingScreen';
 
 export const ProtectedRoutes = ({ requiredRole }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingScreen message="Verifying session..." />;
   }
 
   if (!user) {
