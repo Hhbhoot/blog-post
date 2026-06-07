@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdPlaceholder from './AdPlaceholder';
-import AdSense from './AdSense';
+import GoogleTestAd from './GoogleTestAd';
 import { ADSENSE_ENABLED } from '../../config/ads';
 
 // Sticky footer ad that remains visible at the bottom of the viewport.
 // Uses placeholder when AdSense is disabled or when loading fails.
 const AdStickyFooter = ({ className = '' }) => {
   const [adsenseFailed, setAdsenseFailed] = useState(false);
-
-  // Ensure no layout shift on mount by reserving a small area
-  useEffect(() => {
-    // no-op for now, but useful if we add viewport listeners later
-  }, []);
 
   const containerStyle = {
     position: 'fixed',
@@ -32,13 +27,11 @@ const AdStickyFooter = ({ className = '' }) => {
 
   return (
     <div style={containerStyle} className={className}>
-      <AdSense
-        style={{
-          display: 'block',
-          borderRadius: 8,
-          overflow: 'hidden',
-        }}
-        onError={() => setAdsenseFailed(true)}
+      <GoogleTestAd
+        width="100%"
+        height="250px"
+        sizes={[300, 250]}
+        style={{ margin: 0 }}
       />
     </div>
   );

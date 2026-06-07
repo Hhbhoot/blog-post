@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import AdPlaceholder from './AdPlaceholder';
-import AdSense from './AdSense';
+import GoogleTestAd from './GoogleTestAd';
 import { ADSENSE_ENABLED } from '../../config/ads';
 
-// Top-of-page banner. Renders a placeholder unless ADSENSE_ENABLED is true.
+// Top-of-page and bottom-of-page banner. Renders a placeholder unless ADSENSE_ENABLED is true.
 const AdBanner = ({ className = '' }) => {
   const [adsenseFailed, setAdsenseFailed] = useState(false);
 
@@ -12,12 +12,16 @@ const AdBanner = ({ className = '' }) => {
   }
 
   return (
-    <div
+    <GoogleTestAd
+      width="728px"
+      height="90px"
+      sizes={[
+        [728, 90],
+        [320, 50],
+      ]}
       className={className}
-      style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
-    >
-      <AdSense onError={() => setAdsenseFailed(true)} />
-    </div>
+      style={{ margin: '10px 0' }}
+    />
   );
 };
 

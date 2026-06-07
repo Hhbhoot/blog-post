@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import AdPlaceholder from './AdPlaceholder';
-import AdSense from './AdSense';
+import GoogleTestAd from './GoogleTestAd';
 import { ADSENSE_ENABLED } from '../../config/ads';
 
+// Sidebar ad. Renders a placeholder unless ADSENSE_ENABLED is true.
 const AdSidebar = ({ className = '' }) => {
   const [adsenseFailed, setAdsenseFailed] = useState(false);
 
@@ -11,12 +12,13 @@ const AdSidebar = ({ className = '' }) => {
   }
 
   return (
-    <div
+    <GoogleTestAd
+      width="300px"
+      height="250px"
+      sizes={[300, 250]}
       className={className}
-      style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
-    >
-      <AdSense onError={() => setAdsenseFailed(true)} />
-    </div>
+      style={{ margin: '10px 0' }}
+    />
   );
 };
 
