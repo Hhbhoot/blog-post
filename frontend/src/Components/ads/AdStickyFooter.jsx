@@ -13,22 +13,25 @@ const AdStickyFooter = ({ className = '' }) => {
     // no-op for now, but useful if we add viewport listeners later
   }, []);
 
+  const containerStyle = {
+    position: 'fixed',
+    right: 12,
+    bottom: 12,
+    zIndex: 60,
+    width: '300px',
+    maxWidth: 'calc(100vw - 24px)',
+  };
+
   if (!ADSENSE_ENABLED || adsenseFailed) {
     return (
-      <div
-        style={{ position: 'fixed', right: 12, bottom: 12, zIndex: 60 }}
-        className={className}
-      >
+      <div style={containerStyle} className={className}>
         <AdPlaceholder variant="mobile" />
       </div>
     );
   }
 
   return (
-    <div
-      style={{ position: 'fixed', right: 12, bottom: 12, zIndex: 60 }}
-      className={className}
-    >
+    <div style={containerStyle} className={className}>
       <AdSense
         style={{
           display: 'block',

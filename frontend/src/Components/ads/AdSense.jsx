@@ -57,35 +57,102 @@ const AdSense = ({
   adSlot = ADSENSE_SLOT,
   adFormat = ADSENSE_FORMAT || 'auto',
   adLayoutKey = ADSENSE_LAYOUT_KEY,
-  style = { display: 'block', width: '100%', minWidth: '250px' },
+  style = {},
   className = '',
   onError,
 }) => {
   const ref = useRef(null);
   const location = useLocation();
   const [failed, setFailed] = useState(false);
+  const initializedRef = useRef(false);
+
+  const mergedStyle = {
+    display: 'block',
+    width: '100%',
+    minWidth: '250px',
+    ...style,
+  };
 
   useEffect(() => {
     let mounted = true;
     let timerId = null;
+    let observer = null;
+    let intervalId = null;
 
-    // If the script fails to load, we surface the error so parent can show placeholder
+    // If this component instance has already triggered push, don't do it again
+    if (initializedRef.current) return;
+
     loadAdsenseScript()
       .then(() => {
-        if (!mounted) return;
+        if (!mounted || initializedRef.current) return;
 
-        // Delay initialization to allow browser layout calculation to complete (width > 250px)
-        timerId = setTimeout(() => {
-          if (!mounted) return;
-          try {
-            // Ensure adsbygoogle array exists and request a new ad slot render
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-          } catch (err) {
-            console.error('AdSense push error:', err);
-            setFailed(true);
-            if (onError) onError(err);
+        const insElement = ref.current;
+        if (!insElement) return;
+
+        // If the script already initialized this DOM element, mark initialized and exit
+        if (insElement.getAttribute('data-adsbygoogle-status') === 'done') {
+          initializedRef.current = true;
+          return;
+        }
+
+        const checkAndPush = () => {
+          if (!mounted || initializedRef.current) return false;
+
+          // Compute actual available layout width
+          const width =
+            insElement.offsetWidth ||
+            (insElement.parentElement
+              ? insElement.parentElement.offsetWidth
+              : 0);
+
+          if (width >= 250) {
+            try {
+              initializedRef.current = true;
+              (window.adsbygoogle = window.adsbygoogle || []).push({});
+              return true; // Successfully pushed
+            } catch (err) {
+              console.error('AdSense push error:', err);
+              setFailed(true);
+              if (onError) onError(err);
+              return true; // Stop observing/trying on error
+            }
           }
-        }, 200);
+          return false; // Not wide enough yet
+        };
+
+        // Delay checking to allow initial render paint and layout computation
+        timerId = setTimeout(() => {
+          if (!mounted || initializedRef.current) return;
+
+          if (checkAndPush()) {
+            return;
+          }
+
+          // If not wide enough yet, observe container size changes
+          if (typeof window.ResizeObserver !== 'undefined') {
+            observer = new ResizeObserver(() => {
+              if (checkAndPush()) {
+                if (observer) {
+                  observer.disconnect();
+                  observer = null;
+                }
+              }
+            });
+            observer.observe(insElement);
+            if (insElement.parentElement) {
+              observer.observe(insElement.parentElement);
+            }
+          } else {
+            // Fallback timer if ResizeObserver is not supported
+            let attempts = 0;
+            intervalId = setInterval(() => {
+              if (!mounted || checkAndPush() || attempts++ > 30) {
+                clearInterval(intervalId);
+                intervalId = null;
+              }
+            }, 100);
+          }
+        }, 150);
       })
       .catch((err) => {
         console.error('AdSense script load error:', err);
@@ -96,8 +163,15 @@ const AdSense = ({
     return () => {
       mounted = false;
       if (timerId) clearTimeout(timerId);
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
     };
-    // Re-run when route changes so ads can re-initialize on client navigation
   }, [location.pathname, onError]);
 
   // If script failed, bubble up via children
@@ -109,7 +183,7 @@ const AdSense = ({
   return (
     <ins
       className={`adsbygoogle ${className}`}
-      style={style}
+      style={mergedStyle}
       data-ad-client={ADSENSE_CLIENT || undefined}
       data-ad-slot={adSlot}
       data-ad-format={adFormat}
