@@ -63,7 +63,7 @@ export const testAds = [
 ];
 
 export const ADSENSE_ENABLED = true;
-export const ADSENSE_TEST_MODE = true; // Set to true to request safe test ads from Google
+export const ADSENSE_TEST_MODE = false; // Set to true to request safe test ads from Google
 export const ADSENSE_CLIENT = 'ca-pub-4992424127755633';
 export const ADSENSE_SLOT = '1295057918';
 export const ADSENSE_LAYOUT_KEY = '-6t+ed+2i-1n-4w';
